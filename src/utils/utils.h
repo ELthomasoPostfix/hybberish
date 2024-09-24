@@ -9,6 +9,9 @@
  *
  */
 
+#ifndef UTILS_HYBBERISH_H
+#define UTILS_HYBBERISH_H
+
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
@@ -40,3 +43,5 @@ void utoa(char *const destination, const size_t size, const unsigned int value);
  * @return unsigned int
  */
 unsigned int atou(const char *const source);
+
+#endif
