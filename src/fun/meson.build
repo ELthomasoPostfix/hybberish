@@ -1,5 +1,6 @@
 # Library: Functions and expressions
 fun_lib = library('fun', files(
+    'exptree.c',
     'funexp.c',
     'transformations.c'
     ),

@@ -1,7 +1,8 @@
 /**
  * @file transformations.h
  * @author Thomas Gueutal (thomas.gueutal@student.uantwerpen.be)
- * @brief Functions to transform an expression tree to a desirable form.
+ * @brief Functions to transform an expression tree to a desirable form,
+ * usually by algebraic properties or substitution.
  * @version 0.1
  * @date 2024-09-18
  *
