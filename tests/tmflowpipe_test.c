@@ -1,7 +1,10 @@
 #include "funexp.h"
 #include "sysode.h"
 #include "taylormodel.h"
+#include "tm_arithmetic.h"
 #include "tmflowpipe.h"
+#include "variables.h"
+#include "logging.h"
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>

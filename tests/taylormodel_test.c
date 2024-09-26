@@ -1,5 +1,6 @@
 #include "funexp.h"
-#include "taylormodel.h"
+#include "logging.h"
+#include "tm_arithmetic.h"
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>

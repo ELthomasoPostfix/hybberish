@@ -1,4 +1,5 @@
 #include "funexp.h"
+#include "logging.h"
 #include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>

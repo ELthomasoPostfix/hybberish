@@ -1,4 +1,5 @@
-#include "interval.h"
+#include "interval_arithmetic.h"
+#include "logging.h"
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
