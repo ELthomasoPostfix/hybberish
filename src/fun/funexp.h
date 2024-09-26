@@ -13,15 +13,13 @@
 #define FUNEXP_H
 
 #include "exptree.h"
+#include <assert.h>
+#include <ctype.h>
 #include <math.h>
 #include <regex.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <assert.h>
-#include <ctype.h>
 #include <string.h>
-
-
 
 /**
  * @brief Compute the partial derivative expression w.r.t. the given variable.

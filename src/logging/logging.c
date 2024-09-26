@@ -1,6 +1,6 @@
 #include "logging.h"
 
-void logh(FILE* where, const char* fmt, ...) {
+void logh(FILE *where, const char *fmt, ...) {
   // Based on https://en.cppreference.com/w/c/variadic
 
   va_list args;
@@ -8,75 +8,75 @@ void logh(FILE* where, const char* fmt, ...) {
   const char *const null = "NULL";
 
   while (*fmt != '\0') {
-      char next = *(fmt + 1);
+    char next = *(fmt + 1);
 
-      // A '%' char could be the start of a custom format specifier.
-      if (*fmt == '%' && next != '\0') {
-        switch (next) {
-          case 'E': {
-            const ExpTree *exp = va_arg(args, ExpTree*);
-            if (exp != NULL)
-              printExpTree(exp, where);
-            else
-              fprintf(where, "%s", null);
-            ++fmt; // A format specifier matches two chars!
-            break;
-          }
-          case 'T': {
-            const TaylorModel *tm = va_arg(args, TaylorModel*);
-            if (tm != NULL)
-              printTaylorModel(tm, where);
-            else
-              fprintf(where, "%s", null);
-            ++fmt; // A format specifier matches two chars!
-            break;
-          }
-          case 'I': {
-            const Interval *interval = va_arg(args, Interval*);
-            if (interval != NULL)
-              printInterval(interval, where);
-            else
-              fprintf(where, "%s", null);
-            ++fmt; // A format specifier matches two chars!
-            break;
-          }
-          case 'D': {
-            const Domain *domains = va_arg(args, Domain*);
-            if (domains != NULL)
-              printDomain(domains, where);
-            else
-              fprintf(where, "%s", null);
-            ++fmt; // A format specifier matches two chars!
-            break;
-          }
-          case 's': {
-            const char *str = va_arg(args, char*);
-            str = str != NULL ? str : null;
-            fprintf(where, "%s", str);
-            ++fmt; // A format specifier matches two chars!
-            break;
-          }
-          case 'u': {
-            const unsigned int num = va_arg(args, unsigned int);
-            fprintf(where, "%u", num);
-            ++fmt; // A format specifier matches two chars!
-            break;
-          }
-
-          /* The next char does not match any known, custom format specified.
-            So just print out the '%', it is a normal character. */
-          default:
-            fprintf(where, "%c", *fmt);
-            break;
-        }
-        // All cases in the switch pass increment at the end of the loop!
-
-      // Just log any other char.
-      } else {
-        fprintf(where, "%c", *fmt);
+    // A '%' char could be the start of a custom format specifier.
+    if (*fmt == '%' && next != '\0') {
+      switch (next) {
+      case 'E': {
+        const ExpTree *exp = va_arg(args, ExpTree *);
+        if (exp != NULL)
+          printExpTree(exp, where);
+        else
+          fprintf(where, "%s", null);
+        ++fmt; // A format specifier matches two chars!
+        break;
+      }
+      case 'T': {
+        const TaylorModel *tm = va_arg(args, TaylorModel *);
+        if (tm != NULL)
+          printTaylorModel(tm, where);
+        else
+          fprintf(where, "%s", null);
+        ++fmt; // A format specifier matches two chars!
+        break;
+      }
+      case 'I': {
+        const Interval *interval = va_arg(args, Interval *);
+        if (interval != NULL)
+          printInterval(interval, where);
+        else
+          fprintf(where, "%s", null);
+        ++fmt; // A format specifier matches two chars!
+        break;
+      }
+      case 'D': {
+        const Domain *domains = va_arg(args, Domain *);
+        if (domains != NULL)
+          printDomain(domains, where);
+        else
+          fprintf(where, "%s", null);
+        ++fmt; // A format specifier matches two chars!
+        break;
+      }
+      case 's': {
+        const char *str = va_arg(args, char *);
+        str = str != NULL ? str : null;
+        fprintf(where, "%s", str);
+        ++fmt; // A format specifier matches two chars!
+        break;
+      }
+      case 'u': {
+        const unsigned int num = va_arg(args, unsigned int);
+        fprintf(where, "%u", num);
+        ++fmt; // A format specifier matches two chars!
+        break;
       }
 
-      ++fmt;
+      /* The next char does not match any known, custom format specified.
+        So just print out the '%', it is a normal character. */
+      default:
+        fprintf(where, "%c", *fmt);
+        break;
+      }
+      // All cases in the switch pass increment at the end of the loop!
+
+      // Just log any other char.
+    } else {
+      fprintf(where, "%c", *fmt);
+    }
+
+    ++fmt;
   }
 
   va_end(args);

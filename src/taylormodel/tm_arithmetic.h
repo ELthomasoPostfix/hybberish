@@ -12,12 +12,12 @@
 #ifndef TAYLOR_MODEL_ARITHMETIC_H
 #define TAYLOR_MODEL_ARITHMETIC_H
 
-#include "utils.h"
+#include "interval_arithmetic.h"
 #include "logging.h"
-#include "variables.h"
 #include "taylormodel.h"
 #include "transformations.h"
-#include "interval_arithmetic.h"
+#include "utils.h"
+#include "variables.h"
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>

@@ -11,12 +11,11 @@
 #ifndef EXPTREE_H
 #define EXPTREE_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <assert.h>
-#include <string.h>
 #include <assert.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /**
  * @brief An enumeration of expression tree node types.

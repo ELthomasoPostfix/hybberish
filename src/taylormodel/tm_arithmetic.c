@@ -403,8 +403,8 @@ TaylorModel *addTM(const TaylorModel *const left,
           "   I1 = %I\n"
           "   I2 = %I\n"
           "   Ir = %I",
-          left->exp, right->exp, binaryOp->exp,
-          &left->remainder, &right->remainder, &binaryOp->remainder);
+          left->exp, right->exp, binaryOp->exp, &left->remainder,
+          &right->remainder, &binaryOp->remainder);
 
   TaylorModel *truncated = truncateTM(binaryOp, variables, k);
 
@@ -446,8 +446,8 @@ TaylorModel *subTM(const TaylorModel *const left,
           "   I1 = %I\n"
           "   I2 = %I\n"
           "   Ir = %I",
-          left->exp, right->exp, binaryOp->exp,
-          &left->remainder, &right->remainder, &binaryOp->remainder);
+          left->exp, right->exp, binaryOp->exp, &left->remainder,
+          &right->remainder, &binaryOp->remainder);
 
   TaylorModel *truncated = truncateTM(binaryOp, variables, k);
 
@@ -504,10 +504,9 @@ TaylorModel *mulTM(const TaylorModel *const left,
           "   I2 = %I\n"
           "   Int(p2) = %I\n"
           "   Ir = %I = %I + %I + %I",
-          variables, left->exp, right->exp, binaryOp->exp,
-          &left->remainder, &Intp1, &right->remainder,
-          &Intp2, &binaryOp->remainder,
-          &p1I2, &p2I1, &I1I2);
+          variables, left->exp, right->exp, binaryOp->exp, &left->remainder,
+          &Intp1, &right->remainder, &Intp2, &binaryOp->remainder, &p1I2, &p2I1,
+          &I1I2);
 
   TaylorModel *truncated = truncateTM(binaryOp, variables, k);
 
@@ -653,8 +652,7 @@ TaylorModel *negTM(const TaylorModel *const list, const Domain *const variables,
           "   pr = %E\n"
           "   I1 = %I\n"
           "   Ir = %I",
-          list->exp, unaryOp->exp,
-          &list->remainder, &unaryOp->remainder);
+          list->exp, unaryOp->exp, &list->remainder, &unaryOp->remainder);
 
   TaylorModel *truncated = truncateTM(unaryOp, variables, k);
 
@@ -779,8 +777,8 @@ TaylorModel *truncateTM(const TaylorModel *const list,
           "   I1 = %I\n"
           "   Int(pe) = %I\n"
           "   Ir = %I",
-          k, variables, list->exp, truncatedTerms, simplified,
-          &list->remainder, &enclosure, &remainder)
+          k, variables, list->exp, truncatedTerms, simplified, &list->remainder,
+          &enclosure, &remainder)
 
   /* Clean. */
   if (truncatedTerms != NULL)
@@ -790,4 +788,3 @@ TaylorModel *truncateTM(const TaylorModel *const list,
   return newTMElem(truncateTM(list->next, variables, k), fun, simplified,
                    remainder);
 }
-
