@@ -298,13 +298,15 @@ int main(int argc, char *argv[]) {
       1) Terms do NOT get truncated for the first TM element
           (x + y) + x  =>  (x + y) + x
       2) Terms DO get truncated for the second TM element:
-          (1 - y^2) + (x - z)  =>  (1 - 0) + (x - z)
+          (1 - y^2) + (x - z)
+       =>  (1 - 0) + (x - z)
+       =>  1 + (x - z)
     */
     {
-      ExpTree *sub = newExpOp(EXP_SUB_OP, cpyExpTree(one), cpyExpTree(zero));
       ExpTree *addx =
           newExpOp(EXP_ADD_OP, cpyExpTree(tm1->exp), cpyExpTree(tm2->exp));
-      ExpTree *addy = newExpOp(EXP_ADD_OP, sub, cpyExpTree(tm2->next->exp));
+      ExpTree *addy = newExpOp(EXP_ADD_OP, cpyExpTree(one),
+                                           cpyExpTree(tm2->next->exp));
 
       /* No terms were truncated in the first TM element. */
       Interval remx = addInterval(&I11, &I21);
@@ -342,13 +344,15 @@ int main(int argc, char *argv[]) {
       1) Terms do NOT get truncated for the first TM element:
           (x + y) - x  =>  (x + y) - x
       2) Terms DO get truncated for the second TM element:
-          (1 - y^2) - (x - z)  =>  (1 - 0) - (x - z)
+          (1 - y^2) - (x - z)
+       => (1 - 0) - (x - z)
+       => 1 - (x - z)
     */
     {
-      ExpTree *sub = newExpOp(EXP_SUB_OP, cpyExpTree(one), cpyExpTree(zero));
       ExpTree *subx =
           newExpOp(EXP_SUB_OP, cpyExpTree(tm1->exp), cpyExpTree(tm2->exp));
-      ExpTree *suby = newExpOp(EXP_SUB_OP, sub, cpyExpTree(tm2->next->exp));
+      ExpTree *suby = newExpOp(EXP_SUB_OP, cpyExpTree(one),
+                                           cpyExpTree(tm2->next->exp));
 
       /* No terms were truncated in the first TM element. */
       Interval remx = subInterval(&I11, &I21);
@@ -388,18 +392,15 @@ int main(int argc, char *argv[]) {
       2) Terms DO get truncated for the second TM element:
           (((1 * x) - (1 * z)) - ((y^2 * x) - (y^2 * z)))
       =>  (((1 * x) - (1 * z)) - (0 - 0))
+      =>  (x - z)
     */
     {
       ExpTree *xTx = newExpOp(EXP_MUL_OP, cpyExpTree(x), cpyExpTree(x));
       ExpTree *xTy = newExpOp(EXP_MUL_OP, cpyExpTree(x), cpyExpTree(y));
       ExpTree *mulx = newExpOp(EXP_ADD_OP, xTx, xTy);
 
-      ExpTree *oneTx = newExpOp(EXP_MUL_OP, cpyExpTree(one), cpyExpTree(x));
-      ExpTree *oneTz = newExpOp(EXP_MUL_OP, cpyExpTree(one), cpyExpTree(z));
-      ExpTree *sub = newExpOp(EXP_SUB_OP, oneTx, oneTz);
-      ExpTree *subzeros =
-          newExpOp(EXP_SUB_OP, cpyExpTree(zero), cpyExpTree(zero));
-      ExpTree *muly = newExpOp(EXP_SUB_OP, sub, subzeros);
+      ExpTree *muly = newExpOp(EXP_SUB_OP, cpyExpTree(x),
+                                           cpyExpTree(z));
 
       Interval ypow2 = pow2Interval(&domy->domain, 2);
       Interval intOne = newInterval(1, 1);
@@ -447,7 +448,7 @@ int main(int argc, char *argv[]) {
   }
 
   {
-    const unsigned int tmOrder = 4;
+    const unsigned int tmOrder = 3;
 
     printf("### Taylor model binary EXP (^); TM order k = %i ###\n", tmOrder);
     fflush(stdout);
@@ -457,46 +458,42 @@ int main(int argc, char *argv[]) {
 
       1) Terms do NOT get truncated for the first TM element
           (x + 1)^3
-      =>  (x*x*x + x*x + x*x + x) + (x^2 + x + x + 1)
+      =>  (x + 1)*(x + 1)*(x + 1)     // intermediate result
+      =>  (x + 1)*(x*x + x + x + 1)   // intermediate result
+      =>  x*x*x + x*x + x*x + x + x*x + x + x + 1
       2) Terms DO get truncated for the second TM element:
-          (x + y)^3
-      =>  (x + y)*(x + y)*(x + y)           // intermediate result
-      =>  (x*x + x*y + y*x + y*y)*(x + y)   // intermediate result
-      =>  (x*x*x + x*x*y + x*y*x + x*y*y) + (y*x*x + y*x*y + y*y*x + y*y*y)
+          (x + y^2)^3
+      =>  (x + y^2)*(x + y^2)*(x + y^2)                  // intermediate result
+      =>  (x + y^2)*(x*x + x*y^2 + y^2*x + y^2*y^2)      // intermediate result
+      =>  (x + y^2)*(x*x + x*y^2 + y^2*x + 0)      // intermediate trunc!
+      =>  x*x*x   + x*x*y^2   + x*y^2*x   +        // intermediate result
+          y^2*x*x + y^2*x*y^2 + y^2*y^2*x
+      =>  x*x*x + 0 + 0 + 0 + 0 + 0
     */
     {
+      ExpTree *y2 = newExpOp(EXP_EXP_OP, cpyExpTree(y),
+                                         cpyExpTree(two));
       ExpTree *xP1 = newExpOp(EXP_ADD_OP, cpyExpTree(x), cpyExpTree(one));
-      ExpTree *xPy = newExpOp(EXP_ADD_OP, cpyExpTree(x), cpyExpTree(y));
+      ExpTree *xPy = newExpOp(EXP_ADD_OP, cpyExpTree(x), y2);
 
       TaylorModel *tmpow = newTMElem(NULL, strdup(y->data), xPy, I12);
       tmpow = newTMElem(tmpow, strdup(x->data), xP1, I11);
 
-      /* ((((x * (x * x)) + (x * (x * 1))) + ((x * (1 * x)) + (x * (1 * 1)))) +
-        (((1 * (x * x)) + (1 * (x * 1))) + ((1 * (1 * x)) + (1 * (1 * 1))))) */
+      /* ((((x * (x * x)) + (x * x)) + ((x * x) + x)) +
+        (((x * x) + x) + (x + 1))) */
       ExpTree *xTxTx =
           newExpOp(EXP_MUL_OP, cpyExpTree(x),
                    newExpOp(EXP_MUL_OP, cpyExpTree(x), cpyExpTree(x)));
       ExpTree *xTxTo =
-          newExpOp(EXP_MUL_OP, cpyExpTree(x),
-                   newExpOp(EXP_MUL_OP, cpyExpTree(x), cpyExpTree(one)));
-      ExpTree *xToTo =
-          newExpOp(EXP_MUL_OP, cpyExpTree(x),
-                   newExpOp(EXP_MUL_OP, cpyExpTree(one), cpyExpTree(one)));
-      ExpTree *oToTo =
-          newExpOp(EXP_MUL_OP, cpyExpTree(one),
-                   newExpOp(EXP_MUL_OP, cpyExpTree(one), cpyExpTree(one)));
-      ExpTree *oToTx =
-          newExpOp(EXP_MUL_OP, cpyExpTree(one),
-                   newExpOp(EXP_MUL_OP, cpyExpTree(one), cpyExpTree(x)));
+          newExpOp(EXP_MUL_OP, cpyExpTree(x), cpyExpTree(x));
+      ExpTree *xToTo = cpyExpTree(x);
+      ExpTree *oToTo = cpyExpTree(one);
+      ExpTree *oToTx = cpyExpTree(x);
       ExpTree *oTxTx =
-          newExpOp(EXP_MUL_OP, cpyExpTree(one),
-                   newExpOp(EXP_MUL_OP, cpyExpTree(x), cpyExpTree(x)));
+          newExpOp(EXP_MUL_OP, cpyExpTree(x), cpyExpTree(x));
       ExpTree *xToTx =
-          newExpOp(EXP_MUL_OP, cpyExpTree(x),
-                   newExpOp(EXP_MUL_OP, cpyExpTree(one), cpyExpTree(x)));
-      ExpTree *oTxTo =
-          newExpOp(EXP_MUL_OP, cpyExpTree(one),
-                   newExpOp(EXP_MUL_OP, cpyExpTree(x), cpyExpTree(one)));
+          newExpOp(EXP_MUL_OP, cpyExpTree(x), cpyExpTree(x));
+      ExpTree *oTxTo = cpyExpTree(x);
       ExpTree *add1x = newExpOp(EXP_ADD_OP, xTxTx, xTxTo);
       ExpTree *add2x = newExpOp(EXP_ADD_OP, xToTx, xToTo);
       ExpTree *add3x = newExpOp(EXP_ADD_OP, add1x, add2x);
@@ -505,39 +502,11 @@ int main(int argc, char *argv[]) {
       ExpTree *add6x = newExpOp(EXP_ADD_OP, add4x, add5x);
       ExpTree *mulx = newExpOp(EXP_ADD_OP, add3x, add6x);
 
-      /* ((((x * (x * x)) + (x * (x * y))) + ((x * (y * x)) + (x * (y * y)))) +
-        (((y * (x * x)) + (y * (x * y))) + ((y * (y * x)) + (y * (y * y))))) */
-      ExpTree *xTxTy =
-          newExpOp(EXP_MUL_OP, cpyExpTree(x),
-                   newExpOp(EXP_MUL_OP, cpyExpTree(x), cpyExpTree(y)));
-      ExpTree *xTyTy =
-          newExpOp(EXP_MUL_OP, cpyExpTree(x),
-                   newExpOp(EXP_MUL_OP, cpyExpTree(y), cpyExpTree(y)));
-      ExpTree *yTyTy =
-          newExpOp(EXP_MUL_OP, cpyExpTree(y),
-                   newExpOp(EXP_MUL_OP, cpyExpTree(y), cpyExpTree(y)));
-      ExpTree *yTyTx =
-          newExpOp(EXP_MUL_OP, cpyExpTree(y),
-                   newExpOp(EXP_MUL_OP, cpyExpTree(y), cpyExpTree(x)));
-      ExpTree *yTxTx =
-          newExpOp(EXP_MUL_OP, cpyExpTree(y),
-                   newExpOp(EXP_MUL_OP, cpyExpTree(x), cpyExpTree(x)));
-      ExpTree *xTyTx =
-          newExpOp(EXP_MUL_OP, cpyExpTree(x),
-                   newExpOp(EXP_MUL_OP, cpyExpTree(y), cpyExpTree(x)));
-      ExpTree *yTxTy =
-          newExpOp(EXP_MUL_OP, cpyExpTree(y),
-                   newExpOp(EXP_MUL_OP, cpyExpTree(x), cpyExpTree(y)));
-      ExpTree *add1y = newExpOp(EXP_ADD_OP, cpyExpTree(xTxTx), xTxTy);
-      ExpTree *add2y = newExpOp(EXP_ADD_OP, xTyTx, xTyTy);
-      ExpTree *add3y = newExpOp(EXP_ADD_OP, add1y, add2y);
-      ExpTree *add4y = newExpOp(EXP_ADD_OP, yTxTx, yTxTy);
-      ExpTree *add5y = newExpOp(EXP_ADD_OP, yTyTx, yTyTy);
-      ExpTree *add6y = newExpOp(EXP_ADD_OP, add4y, add5y);
-      ExpTree *muly = newExpOp(EXP_ADD_OP, add3y, add6y);
+      /* (x * (x * x)) */
+      ExpTree *muly = cpyExpTree(xTxTx);
 
       Interval remx = newInterval(-2.791000, 2.791000);
-      Interval remy = newInterval(-10.981000, 10.981000);
+      Interval remy = newInterval(930.139000, 5921.741000);
 
       /* Compose the Taylor model expected as output. */
       TaylorModel *expected =
@@ -556,7 +525,7 @@ int main(int argc, char *argv[]) {
   }
 
   {
-    const unsigned int tmOrder = 5;
+    const unsigned int tmOrder = 1;
 
     printf("### Taylor model binary DIV (/); TM order k = %i ###\n", tmOrder);
     fflush(stdout);
@@ -567,28 +536,59 @@ int main(int argc, char *argv[]) {
       1) Terms do NOT get truncated for the first TM element
           x / x  =>  x / x
       2) Terms DO get truncated for the second TM element:
-          (x / y^2) + x^3  =>  (x / y^2) + 0
+          (x / y^2)  =>  (x / y^2) + 0
     */
     {
 
-      ExpTree *random = cpyExpTree(x);
+      ExpTree *divx = newExpOp(EXP_DIV_OP, cpyExpTree(x), cpyExpTree(x));
+
+      ExpTree *y2 = newExpOp(EXP_EXP_OP, cpyExpTree(y), cpyExpTree(two));
+      ExpTree *x3 = newExpOp(EXP_EXP_OP, cpyExpTree(x),
+                                         newExpLeaf(EXP_NUM, "3"));
+      ExpTree *xDy2 = newExpOp(EXP_DIV_OP, cpyExpTree(x), y2);
+      ExpTree *divy = newExpOp(EXP_ADD_OP, xDy2, x3);
 
       /* Compose the Taylor model expected as output. */
       TaylorModel *expected =
-          newTMElem(NULL, strdup(tm1->next->fun), random, newInterval(0, 0));
+          newTMElem(NULL, strdup(tm2->next->fun), divy, newInterval(0, 0));
+      expected =
+          newTMElem(expected, strdup(tm1->next->fun), divx, newInterval(0, 0));
 
-      // TODO: Implement test properly !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      /* Compose new input Taylor models, since TM division has
+        some restrictions. */
+      ExpTree *tm1ExpX = cpyExpTree(x);
+      ExpTree *tm1ExpY = cpyExpTree(x);
+      ExpTree *tm2ExpX = cpyExpTree(x);
+      ExpTree *tm2ExpY = newExpOp(EXP_EXP_OP, cpyExpTree(y), cpyExpTree(two));
+
+      TaylorModel *tm1Div =
+          newTMElem(NULL, strdup("y"), tm1ExpY, newInterval(2, 2));
+      tm1Div =
+          newTMElem(tm1Div, strdup("x"), tm1ExpX, newInterval(1, 1));
+
+      TaylorModel *tm2Div =
+          newTMElem(NULL, strdup("y"), tm2ExpY, newInterval(2, 2));
+      tm2Div =
+          newTMElem(tm2Div, strdup("x"), tm2ExpX, newInterval(1, 1));
+
+      /* Compose new variable domains to simplify the example. */
+      Domain *domyDiv = newDomainElem(NULL, strdup("y"), newInterval(2, 4));
+      Domain *domxDiv = newDomainElem(domyDiv, strdup("x"), newInterval(2, 4));
+      Domain *domainsDiv = domxDiv;
+
+      // TODO: Uncomment test code, when TM DIV is ready to be tested.
+      //       Do not forget to add logging to it!
 
       /* Compute and test results. */
-      printf("@@@ B\n");
-      fflush(stdout);
-      // TaylorModel *binop = divTM(tm1, tm2, domains, tmOrder);
-      // printf("@@@ E "); printTaylorModel(binop, stdout); printf("\n");
-      // fflush(stdout); testTaylorModel(binop, expected, epsilon);
+      // TaylorModel *binop = divTM(tm1Div, tm2Div, domainsDiv, tmOrder);
+      // testTaylorModel(binop, expected, epsilon);
       // delTaylorModel(binop);
 
       /* Clean */
+      delDomain(domainsDiv);
       delTaylorModel(expected);
+      delTaylorModel(tm1Div);
+      delTaylorModel(tm2Div);
     }
   }
 
@@ -692,7 +692,7 @@ int main(int argc, char *argv[]) {
        = (-((y * z) - (x + 1)), [-39.883, -1.117])
     */
     ExpTree *yTz = newExpOp(EXP_MUL_OP, cpyExpTree(y), cpyExpTree(z));
-    ExpTree *subLeft = newExpOp(EXP_ADD_OP, cpyExpTree(zero), yTz);
+    ExpTree *subLeft = yTz;
     ExpTree *subRight = newExpOp(EXP_ADD_OP, cpyExpTree(x), cpyExpTree(one));
     ExpTree *subFull = newExpOp(EXP_SUB_OP, subLeft, subRight);
     ExpTree *neg = newExpOp(EXP_NEG, subFull, NULL);
