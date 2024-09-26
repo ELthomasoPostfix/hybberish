@@ -34,13 +34,3 @@ void delOdeList(ODEList *list) {
   delExpTree(list->exp);
   free(list);
 }
-
-void printOdeList(ODEList *list, FILE *where) {
-  assert(list->fun != NULL);
-  fprintf(where, "%s' = ", list->fun);
-  assert(list->exp != NULL);
-  printExpTree(list->exp, where);
-  fprintf(where, "; ");
-  if (list->next != NULL)
-    printOdeList(list->next, where);
-}

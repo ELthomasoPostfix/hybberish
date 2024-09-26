@@ -6,8 +6,10 @@
  * @details In this context, valuation refers to two concepts:
  *  1. A real-valued variable Valuation that fixes the value of
  *     a variable to a single, real value.
+ *     e.g. x = 3; y = 7; ...
  *  2. An interval-valued variable Domain, that describes the
  *     domain of values a variable can take on.
+ *     e.g. x in [-1, 2.5]; y in [4, 4]; ...
  * @version 0.1
  * @date 2024-09-17
  *
@@ -93,15 +95,6 @@ Domain *newDomainElem(Domain *tail, char *var, const Interval domain);
 void delDomain(Domain *list);
 
 /**
- * @brief Print a representation of the given list to the specified stream.
- * @pre Neither the given \p list nor stream ( \p where ) may both be NULL.
- *
- * @param[in] list  The list to print.
- * @param[in] where The stream (destination) to print to.
- */
-void printDomain(const Domain *list, FILE *where);
-
-/**
  * @brief A class representing a vector of variables,
  * each with an exact, real-valued valuation, as a linked list.
  * @details For example, given an ordered set of variables {x, y},
@@ -170,14 +163,5 @@ Valuation *newValuationElem(Valuation *tail, char *var, const double val);
  * @pre The given list must not be NULL.
  */
 void delValuation(Valuation *list);
-
-/**
- * @brief Print a representation of the given list to the specified stream.
- * @pre Neither the given \p list nor stream ( \p where ) may both be NULL.
- *
- * @param[in] list  The list to print.
- * @param[in] where The stream (destination) to print to.
- */
-void printValuation(const Valuation *list, FILE *where);
 
 #endif

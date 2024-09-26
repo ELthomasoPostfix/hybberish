@@ -31,17 +31,6 @@ void delDomain(Domain *list) {
   free(list);
 }
 
-void printDomain(const Domain *list, FILE *where) {
-  assert(list->var != NULL);
-  fprintf(where, "%s in ", list->var);
-
-  printInterval(&list->domain, where);
-
-  fprintf(where, "; ");
-  if (list->next != NULL)
-    printDomain(list->next, where);
-}
-
 Valuation *newValuation(char *var, const double val) {
   assert(var != NULL);
 
@@ -71,13 +60,4 @@ void delValuation(Valuation *list) {
   assert(list->var != NULL);
   free(list->var);
   free(list);
-}
-
-void printValuation(const Valuation *list, FILE *where) {
-  assert(list->var != NULL);
-  fprintf(where, "%s = %f", list->var, list->val);
-
-  fprintf(where, "; ");
-  if (list->next != NULL)
-    printValuation(list->next, where);
 }

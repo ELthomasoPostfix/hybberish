@@ -14,9 +14,7 @@
 
 #include <stdio.h>
 
-#include "funexp.h"
-
-/* Lists of ODEs */
+#include "exptree.h"
 
 /**
  * @brief A system of ODEs as a linked list.
@@ -90,14 +88,5 @@ ODEList *newOdeElem(ODEList *tail, char *fun, ExpTree *exp);
  * @pre The given list must not be NULL.
  */
 void delOdeList(ODEList *list);
-
-/**
- * @brief Print a representation of the given list to the specified stream.
- * @pre Neither the given \p list nor stream ( \p where ) may be NULL.
- *
- * @param[in] list  The list to print.
- * @param[in] where The stream (destination) to print to.
- */
-void printOdeList(ODEList *list, FILE *where);
 
 #endif

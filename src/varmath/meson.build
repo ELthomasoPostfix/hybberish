@@ -1,6 +1,7 @@
 # Library: Variable valuations and interval math
 varmath_lib = library('varmath', files(
                         'interval.c',
+                        'interval_arithmetic.c',
                         'variables.c',
                       ),
                       # IMPORTANT: math functions (floor, ceil, ...)
