@@ -1,6 +1,6 @@
+#include "logging.h"
 #include "variables.h"
 #include "varparse.h"
-#include "logging.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>

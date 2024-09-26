@@ -305,8 +305,8 @@ int main(int argc, char *argv[]) {
     {
       ExpTree *addx =
           newExpOp(EXP_ADD_OP, cpyExpTree(tm1->exp), cpyExpTree(tm2->exp));
-      ExpTree *addy = newExpOp(EXP_ADD_OP, cpyExpTree(one),
-                                           cpyExpTree(tm2->next->exp));
+      ExpTree *addy =
+          newExpOp(EXP_ADD_OP, cpyExpTree(one), cpyExpTree(tm2->next->exp));
 
       /* No terms were truncated in the first TM element. */
       Interval remx = addInterval(&I11, &I21);
@@ -351,8 +351,8 @@ int main(int argc, char *argv[]) {
     {
       ExpTree *subx =
           newExpOp(EXP_SUB_OP, cpyExpTree(tm1->exp), cpyExpTree(tm2->exp));
-      ExpTree *suby = newExpOp(EXP_SUB_OP, cpyExpTree(one),
-                                           cpyExpTree(tm2->next->exp));
+      ExpTree *suby =
+          newExpOp(EXP_SUB_OP, cpyExpTree(one), cpyExpTree(tm2->next->exp));
 
       /* No terms were truncated in the first TM element. */
       Interval remx = subInterval(&I11, &I21);
@@ -399,8 +399,7 @@ int main(int argc, char *argv[]) {
       ExpTree *xTy = newExpOp(EXP_MUL_OP, cpyExpTree(x), cpyExpTree(y));
       ExpTree *mulx = newExpOp(EXP_ADD_OP, xTx, xTy);
 
-      ExpTree *muly = newExpOp(EXP_SUB_OP, cpyExpTree(x),
-                                           cpyExpTree(z));
+      ExpTree *muly = newExpOp(EXP_SUB_OP, cpyExpTree(x), cpyExpTree(z));
 
       Interval ypow2 = pow2Interval(&domy->domain, 2);
       Interval intOne = newInterval(1, 1);
@@ -471,8 +470,7 @@ int main(int argc, char *argv[]) {
       =>  x*x*x + 0 + 0 + 0 + 0 + 0
     */
     {
-      ExpTree *y2 = newExpOp(EXP_EXP_OP, cpyExpTree(y),
-                                         cpyExpTree(two));
+      ExpTree *y2 = newExpOp(EXP_EXP_OP, cpyExpTree(y), cpyExpTree(two));
       ExpTree *xP1 = newExpOp(EXP_ADD_OP, cpyExpTree(x), cpyExpTree(one));
       ExpTree *xPy = newExpOp(EXP_ADD_OP, cpyExpTree(x), y2);
 
@@ -484,15 +482,12 @@ int main(int argc, char *argv[]) {
       ExpTree *xTxTx =
           newExpOp(EXP_MUL_OP, cpyExpTree(x),
                    newExpOp(EXP_MUL_OP, cpyExpTree(x), cpyExpTree(x)));
-      ExpTree *xTxTo =
-          newExpOp(EXP_MUL_OP, cpyExpTree(x), cpyExpTree(x));
+      ExpTree *xTxTo = newExpOp(EXP_MUL_OP, cpyExpTree(x), cpyExpTree(x));
       ExpTree *xToTo = cpyExpTree(x);
       ExpTree *oToTo = cpyExpTree(one);
       ExpTree *oToTx = cpyExpTree(x);
-      ExpTree *oTxTx =
-          newExpOp(EXP_MUL_OP, cpyExpTree(x), cpyExpTree(x));
-      ExpTree *xToTx =
-          newExpOp(EXP_MUL_OP, cpyExpTree(x), cpyExpTree(x));
+      ExpTree *oTxTx = newExpOp(EXP_MUL_OP, cpyExpTree(x), cpyExpTree(x));
+      ExpTree *xToTx = newExpOp(EXP_MUL_OP, cpyExpTree(x), cpyExpTree(x));
       ExpTree *oTxTo = cpyExpTree(x);
       ExpTree *add1x = newExpOp(EXP_ADD_OP, xTxTx, xTxTo);
       ExpTree *add2x = newExpOp(EXP_ADD_OP, xToTx, xToTo);
@@ -543,8 +538,8 @@ int main(int argc, char *argv[]) {
       ExpTree *divx = newExpOp(EXP_DIV_OP, cpyExpTree(x), cpyExpTree(x));
 
       ExpTree *y2 = newExpOp(EXP_EXP_OP, cpyExpTree(y), cpyExpTree(two));
-      ExpTree *x3 = newExpOp(EXP_EXP_OP, cpyExpTree(x),
-                                         newExpLeaf(EXP_NUM, "3"));
+      ExpTree *x3 =
+          newExpOp(EXP_EXP_OP, cpyExpTree(x), newExpLeaf(EXP_NUM, "3"));
       ExpTree *xDy2 = newExpOp(EXP_DIV_OP, cpyExpTree(x), y2);
       ExpTree *divy = newExpOp(EXP_ADD_OP, xDy2, x3);
 
@@ -563,13 +558,11 @@ int main(int argc, char *argv[]) {
 
       TaylorModel *tm1Div =
           newTMElem(NULL, strdup("y"), tm1ExpY, newInterval(2, 2));
-      tm1Div =
-          newTMElem(tm1Div, strdup("x"), tm1ExpX, newInterval(1, 1));
+      tm1Div = newTMElem(tm1Div, strdup("x"), tm1ExpX, newInterval(1, 1));
 
       TaylorModel *tm2Div =
           newTMElem(NULL, strdup("y"), tm2ExpY, newInterval(2, 2));
-      tm2Div =
-          newTMElem(tm2Div, strdup("x"), tm2ExpX, newInterval(1, 1));
+      tm2Div = newTMElem(tm2Div, strdup("x"), tm2ExpX, newInterval(1, 1));
 
       /* Compose new variable domains to simplify the example. */
       Domain *domyDiv = newDomainElem(NULL, strdup("y"), newInterval(2, 4));

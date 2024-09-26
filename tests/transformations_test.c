@@ -1,5 +1,5 @@
-#include "transformations.h"
 #include "logging.h"
+#include "transformations.h"
 
 void testSimplified(ExpTree *from, ExpTree *simplified, ExpTree *expected) {
   bool compare = isEqual(simplified, expected);

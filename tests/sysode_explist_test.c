@@ -1,5 +1,5 @@
-#include "sysode.h"
 #include "logging.h"
+#include "sysode.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>

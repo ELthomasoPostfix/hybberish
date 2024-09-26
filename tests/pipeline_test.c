@@ -1,9 +1,9 @@
 #include "funexp.h"
+#include "logging.h"
 #include "odeparse.h"
 #include "sysode.h"
 #include "taylormodel.h"
 #include "tmflowpipe.h"
-#include "logging.h"
 #include "varparse.h"
 #include <assert.h>
 #include <math.h>

@@ -1,6 +1,6 @@
+#include "logging.h"
 #include "odeparse.h"
 #include "sysode.h"
-#include "logging.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
