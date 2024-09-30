@@ -9,6 +9,12 @@ TaylorModel *computeTaylorPolynomial(ODEList *system, unsigned int order,
     would just get truncated anyways, so impose an explicit restriction. */
   assert(order <= k);
 
+  LOG_LINE(LOG_COMP, "## TM integration, Step 1, compute Taylor polynomial ##")
+  LOG_FMT(LOG_COMP, "Taylor polynomal order = %u", order)
+  LOG_FMT(LOG_COMP, "truncation order = %u", k)
+  LOG_FMT(LOG_COMP, "ODEs = %O", system)
+  LOG_LINE(LOG_COMP, "#######################################################")
+
   /* The functions to seed each Lie derivation with. */
   TaylorModel *lieDerivativeSeed = initTaylorModel(system);
   /* The Taylor polynomials that will be built up in-place. */
@@ -17,6 +23,8 @@ TaylorModel *computeTaylorPolynomial(ODEList *system, unsigned int order,
   /* Start from i=1; case i=0 would be an order 0 Lie derivative. */
   for (unsigned int index = 1; index <= order; ++index) {
     TaylorModel *lieDeriv = lieDerivativeK(system, lieDerivativeSeed, index);
+
+    LOG_FMT(LOG_COMP, "%Mbb \"L\"_f^%u(%T)%M = %T", index, lieDerivativeSeed, lieDeriv)
 
     TaylorModel *poly = polynomials;
     TaylorModel *deriv = lieDeriv;

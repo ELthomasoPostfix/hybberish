@@ -18,6 +18,7 @@
 #include "sysode.h"
 #include "taylormodel.h"
 #include "transformations.h"
+#include "logging.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>

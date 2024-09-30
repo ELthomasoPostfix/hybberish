@@ -16,6 +16,8 @@ int main(int argc, char *argv[]) {
   (void)argc;
   (void)argv;
 
+  logLevelHybberish = LOG_COMP;
+
   /* Manually lay out the TM integration pipeline that the main script
     will follow. This allows testing how each of the different parts of the
     pipeline fit together, and verifying their output in a controlled
@@ -27,33 +29,26 @@ int main(int argc, char *argv[]) {
 
     /* Setup of the TM integration pipeline: call the parsing functionality
       to convert string inputs to data structures. */
-    printf("=== Setup ===\n");
-    fflush(stdout);
+    LOG_LINE(LOG_COMP, "=== Setup")
 
     char *odeStr = "x' = 1 + y; y' = x^2;";
     ODEList *odes;
     code = parseOdeString(odeStr, &odes);
-    printOdeList(odes, stdout);
-    printf("\n");
-    fflush(stdout);
     assert(code == 0);
+    LOG_FMT(LOG_COMP, "%O", odes)
+
 
     char *varStr = "x in [-1, 1]; y in [-0.5, 0.5];";
     Domain *domains;
     code = parseVarString(varStr, &domains);
-    printDomain(domains, stdout);
-    printf("\n\n");
-    fflush(stdout);
     assert(code == 0);
+    LOG_FMT(LOG_COMP, "%D", domains)
+
 
     /* Actually run the TM flowpipe overapprox pipeline;
       the TM integration algorithm. */
-    printf("=== Flowpipe overapprox ===\n");
-    fflush(stdout);
     TaylorModel *tms = computeTaylorPolynomial(odes, order, k);
-    printTaylorModel(tms, stdout);
-    printf("\n");
-    fflush(stdout);
+    LOG_FMT(LOG_COMP, "%Mp_%u%M = %T", order, tms);
 
     // TODO: Add safe remainder computation ...
 
