@@ -21,3 +21,7 @@ apt install doxygen
 cd doxygen/
 doxygen
 ```
+
+## Notes on logging
+
+To generate formatted logs, refer to [the output README](/output/README.md).
