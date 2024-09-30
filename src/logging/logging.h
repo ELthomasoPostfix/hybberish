@@ -11,8 +11,6 @@
  *
  */
 
-/// @brief If defined, then logging macros compile to actual code.
-#define LOGGING_HYBBERISH
 
 /// @brief The set of macros that facilitate optional logging.
 #ifndef LOG_MACROS_HYBBERISH_H
@@ -25,8 +23,6 @@
 #include "variables.h"
 #include <stdarg.h>
 #include <stdio.h>
-
-#ifdef LOGGING_HYBBERISH /* All debug macros compile to actual code. */
 
 /**
  * @brief The level of logging that the application should perform at runtime.
@@ -44,6 +40,14 @@ extern LogLevel logLevelHybberish;
  */
 /// @brief The stream the logger writes to.
 #define LOG_STREAM stderr
+/// @brief The math environment delimiter.
+#define LOG_DMATH "\\`"
+/// @brief Print delimeters around the given code fragment if toggle is true.
+#define LOG_DELIM(where, toggle, delim, code) if (toggle) {                    \
+                                                fprintf(where, delim);         \
+                                                code                           \
+                                                fprintf(where, delim); }       \
+                                              else { code }
 
 /* These are "public" macros, and should be used for logging.
  */
@@ -59,6 +63,7 @@ extern LogLevel logLevelHybberish;
 #define LOG_TM(level, tm) LOG_FMT(level, "%T", tm)
 /// @brief Print a char* message to the log stream with prefix and a newline.
 #define LOG_LINE(level, msg) LOG_FMT(level, "%s", msg)
+
 
 /**
  * @brief Print a string representation of an interval to a stream.
@@ -87,6 +92,55 @@ void printDomain(const Domain *list, FILE *where);
 void printValuation(const Valuation *list, FILE *where);
 
 /**
+ * @brief Determine an operator precedence value for use in grouping subtrees
+ * using parentheses in algebra expressions.
+ * @details In most cases, an expression of node type B should be enclosed by
+ * parentheses if it is of strictly lower precedence than its parent of node
+ * type A.
+ *
+ * Intuitively, in a * b + c the multiplication "steals" the "b" operand from
+ * the addition, so we require parentheses to instead enforce a * (b + c).
+ * This is because the multiplication has higher operator precedence than the
+ * addition.
+ *
+ * In some cases, nodes with the same precedence value also require grouping,
+ * either for correctness or clarity.
+ * For example: a - (b - c) != a - b - c, so grouping ensures correctness.
+ * Or: a / b / c != a / (b / c), because a / b / c is usually implicitly
+ * grouped left-to-right as ((a / b) / c), so grouping ensures correctness.
+ * Or: a / b / c == (a / b) / c, so parentheses simply make the expression
+ * more explicit for added clarity.
+ *
+ * @param type The type to determine the precedence value/ranking for.
+ * @return unsigned int The precedence value.
+ */
+unsigned int parenthesisPrecedence(const ExpType type);
+
+/**
+ * @brief Print a representation of the given subtree, based on a known parent.
+ * @details Make use of operator precedence rules defined by
+ * @ref parenthesisPrecedence to decide if the subtree's expression should be
+ * grouped using parentheses or not. For example, given a multiplication parent
+ * node and an addition subtree node, the addition needs to always be grouped.
+ * Observe: a * (b + c) != a * b + c. Here the parent is a * (b + c), while the
+ * subtree is (b + c).
+ *
+ * Some operators may need to group same-precedence operands.
+ * Same-precedence grouping must be explicitly allowed using
+ * \p allowSamePrecedence.
+ *
+ * @param parent              The parent, based on which to decide grouping.
+ * @param subtree             The tree to print.
+ * @param where               The stream (destination) to print to.
+ * @param allowSamePrecedence If false, then only strictly lower (<) precedence
+ *                            results in grouping.
+ *                            If true, then lower or equal precedence results
+ *                            in grouping.
+ */
+void printSubTree(const ExpTree *parent, const ExpTree* subtree, FILE *where,
+                  const bool allowSamePrecedence);
+
+/**
  * @brief Print a representation of the given tree to the specified stream.
  * @pre Neither the given \p tree nor stream ( \p where ) may be NULL.
  *
@@ -102,7 +156,7 @@ void printExpTree(const ExpTree *tree, FILE *where);
  * @param[in] list  The list to print.
  * @param[in] where The stream (destination) to print to.
  */
-void printOdeList(ODEList *list, FILE *where);
+void printOdeList(const ODEList *list, FILE *where);
 
 /**
  * @brief Print a representation of the given list to the specified stream.
@@ -122,6 +176,7 @@ void printTaylorModel(const TaylorModel *const list, FILE *where);
  * Specifier Substring |  Parameter Type  | Is Pointer Type?
  * :-----------------: | :--------------- | :--------------:
  *        \%E          | ExpTree *        |       YES
+ *        \%O          | ODEList *        |       YES
  *        \%T          | TaylorModel *    |       YES
  *        \%I          | Interval *       |       YES
  *        \%D          | Domain *         |       YES
@@ -131,6 +186,15 @@ void printTaylorModel(const TaylorModel *const list, FILE *where);
  * Many variadic parameters are required to be a pointer type.
  * NULL pointers are simply logged as the string "NULL".
  * See the details for which specifier should or should not be a pointer type.
+ *
+ * Certain parameter-less format specifiers are also allowed, i.e. you should
+ * never pass a parameter for such a specifier. They are used to print known
+ * constants to the log. The following table specifies them.
+ *
+ * | Specifier Substring |  Description
+ * | :-----------------: | :-----------
+ * |        \%M          |  The math environment delimiter. Manually specify
+ * |                     |  a math environment in the format string.
  *
  * For example, "%I + %I" can be used to log a string resembling a sum of
  * two intervals. The following python-esque pseudocode gives an example.
@@ -150,15 +214,4 @@ void printTaylorModel(const TaylorModel *const list, FILE *where);
  */
 void logh(FILE *where, const char *fmt, ...);
 
-#else /* All debug macros compile to no code. */
-
-extern LogLevel logLevelHybberish;
-
-#define LOG_STREAM
-
-#define LOG_FMT(level, fmt, ...)
-#define LOG_TM(level, tm)
-#define LOG_LINE(level, msg)
-
-#endif
 #endif
