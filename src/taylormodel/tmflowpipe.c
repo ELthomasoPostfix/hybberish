@@ -24,7 +24,8 @@ TaylorModel *computeTaylorPolynomial(ODEList *system, unsigned int order,
   for (unsigned int index = 1; index <= order; ++index) {
     TaylorModel *lieDeriv = lieDerivativeK(system, lieDerivativeSeed, index);
 
-    LOG_FMT(LOG_COMP, "%Mbb \"L\"_f^%u(%T)%M = %T", index, lieDerivativeSeed, lieDeriv)
+    LOG_FMT(LOG_COMP, "%Mbb \"L\"_f^%u(%T)%M = %T", index, lieDerivativeSeed,
+            lieDeriv)
 
     TaylorModel *poly = polynomials;
     TaylorModel *deriv = lieDeriv;

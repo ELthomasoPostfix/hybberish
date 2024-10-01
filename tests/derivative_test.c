@@ -209,8 +209,7 @@ int main(int argc, char *argv[]) {
         newExpOp(EXP_EXP_OP, cpyExpTree(x), newExpLeaf(EXP_NUM, "3"));
     ExpTree *sqrt_x_cubed =
         newExpTree(EXP_FUN, strdup("sqrt"), cpyExpTree(x_cubed), NULL);
-    test_derivative(sqrt_x_cubed, "x",
-                    "0.5 * (3 * 1 * x^2) / sqrt((x^3))");
+    test_derivative(sqrt_x_cubed, "x", "0.5 * (3 * 1 * x^2) / sqrt((x^3))");
     delExpTree(x);
     delExpTree(x_cubed);
     delExpTree(sqrt_x_cubed);

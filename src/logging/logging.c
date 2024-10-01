@@ -30,10 +30,8 @@ void logh(FILE *where, const char *fmt, ...) {
       case 'O': {
         const ODEList *sys = va_arg(args, ODEList *);
         if (sys != NULL)
-          LOG_DELIM(where, notInMathEnv, LOG_DMATH,
-             fprintf(where, "(");
-             printOdeList(sys, where);
-             fprintf(where, ")");)
+          LOG_DELIM(where, notInMathEnv, LOG_DMATH, fprintf(where, "(");
+                    printOdeList(sys, where); fprintf(where, ")");)
         else
           fprintf(where, "%s", null);
         ++fmt; // A format specifier matches two chars!
@@ -42,10 +40,8 @@ void logh(FILE *where, const char *fmt, ...) {
       case 'T': {
         const TaylorModel *tm = va_arg(args, TaylorModel *);
         if (tm != NULL)
-          LOG_DELIM(where, notInMathEnv, LOG_DMATH,
-             fprintf(where, "(");
-             printTaylorModel(tm, where);
-             fprintf(where, ")");)
+          LOG_DELIM(where, notInMathEnv, LOG_DMATH, fprintf(where, "(");
+                    printTaylorModel(tm, where); fprintf(where, ")");)
         else
           fprintf(where, "%s", null);
         ++fmt; // A format specifier matches two chars!
@@ -64,10 +60,8 @@ void logh(FILE *where, const char *fmt, ...) {
       case 'D': {
         const Domain *domains = va_arg(args, Domain *);
         if (domains != NULL)
-          LOG_DELIM(where, notInMathEnv, LOG_DMATH,
-             fprintf(where, "(");
-             printDomain(domains, where);
-             fprintf(where, ")");)
+          LOG_DELIM(where, notInMathEnv, LOG_DMATH, fprintf(where, "(");
+                    printDomain(domains, where); fprintf(where, ")");)
         else
           fprintf(where, "%s", null);
         ++fmt; // A format specifier matches two chars!
@@ -102,7 +96,8 @@ void logh(FILE *where, const char *fmt, ...) {
       default: {
         fprintf(where, "%c", *fmt);
         break;
-      }}
+      }
+      }
 
       // All cases in the switch pass increment at the end of the loop!
 
@@ -204,7 +199,7 @@ unsigned int parenthesisPrecedence(const ExpType type) {
   }
 }
 
-void printSubTree(const ExpTree *parent, const ExpTree* subtree, FILE *where,
+void printSubTree(const ExpTree *parent, const ExpTree *subtree, FILE *where,
                   const bool allowSamePrecedence) {
   assert(parent != NULL);
   assert(subtree != NULL);
@@ -219,14 +214,13 @@ void printSubTree(const ExpTree *parent, const ExpTree* subtree, FILE *where,
     The same can optionally be enforced when the parent and subtree have the
     same precedence. */
   if ((childPrec < parentPrec) ||
-     ((childPrec == parentPrec) && allowSamePrecedence)) {
+      ((childPrec == parentPrec) && allowSamePrecedence)) {
     fprintf(where, "(");
     printExpTree(subtree, where);
     fprintf(where, ")");
   } else
     printExpTree(subtree, where);
 }
-
 
 void printExpTree(const ExpTree *tree, FILE *where) {
   /* A simple depth-first search while printing in-order. */

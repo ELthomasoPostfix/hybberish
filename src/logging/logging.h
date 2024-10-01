@@ -11,7 +11,6 @@
  *
  */
 
-
 /// @brief The set of macros that facilitate optional logging.
 #ifndef LOG_MACROS_HYBBERISH_H
 #define LOG_MACROS_HYBBERISH_H
@@ -43,11 +42,13 @@ extern LogLevel logLevelHybberish;
 /// @brief The math environment delimiter.
 #define LOG_DMATH "\\`"
 /// @brief Print delimeters around the given code fragment if toggle is true.
-#define LOG_DELIM(where, toggle, delim, code) if (toggle) {                    \
-                                                fprintf(where, delim);         \
-                                                code                           \
-                                                fprintf(where, delim); }       \
-                                              else { code }
+#define LOG_DELIM(where, toggle, delim, code)                                  \
+  if (toggle) {                                                                \
+    fprintf(where, delim);                                                     \
+    code fprintf(where, delim);                                                \
+  } else {                                                                     \
+    code                                                                       \
+  }
 
 /* These are "public" macros, and should be used for logging.
  */
@@ -63,7 +64,6 @@ extern LogLevel logLevelHybberish;
 #define LOG_TM(level, tm) LOG_FMT(level, "%T", tm)
 /// @brief Print a char* message to the log stream with prefix and a newline.
 #define LOG_LINE(level, msg) LOG_FMT(level, "%s", msg)
-
 
 /**
  * @brief Print a string representation of an interval to a stream.
@@ -137,7 +137,7 @@ unsigned int parenthesisPrecedence(const ExpType type);
  *                            If true, then lower or equal precedence results
  *                            in grouping.
  */
-void printSubTree(const ExpTree *parent, const ExpTree* subtree, FILE *where,
+void printSubTree(const ExpTree *parent, const ExpTree *subtree, FILE *where,
                   const bool allowSamePrecedence);
 
 /**

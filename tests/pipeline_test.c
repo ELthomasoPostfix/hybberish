@@ -37,13 +37,11 @@ int main(int argc, char *argv[]) {
     assert(code == 0);
     LOG_FMT(LOG_COMP, "%O", odes)
 
-
     char *varStr = "x in [-1, 1]; y in [-0.5, 0.5];";
     Domain *domains;
     code = parseVarString(varStr, &domains);
     assert(code == 0);
     LOG_FMT(LOG_COMP, "%D", domains)
-
 
     /* Actually run the TM flowpipe overapprox pipeline;
       the TM integration algorithm. */
