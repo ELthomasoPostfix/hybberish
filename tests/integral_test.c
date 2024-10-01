@@ -21,8 +21,8 @@ void test_integral(ExpTree *expr, char *var, const char *expected_msg) {
   printf("Expect: %s\n", expected_msg);
   printf("Actual: %s\n", buffer);
   printf("!strcmp = %i\n", !strcmp(buffer, expected_msg));
-  assert(!strcmp(buffer, expected_msg));
   fflush(stdout); // Flush stdout
+  assert(!strcmp(buffer, expected_msg));
 
   /* clean */
   free(buffer);
@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
   /* integral of a constant */
   {
     ExpTree *exp = newExpLeaf(EXP_NUM, "5");
-    test_integral(exp, "x", "(5 * x)");
+    test_integral(exp, "x", "5 * x");
 
     delExpTree(exp);
   }
@@ -45,14 +45,14 @@ int main(int argc, char *argv[]) {
   /* integral of x w.r.t itself */
   {
     ExpTree *x = newExpLeaf(EXP_VAR, "x");
-    test_integral(x, "x", "(0.5 * (x^2))");
+    test_integral(x, "x", "0.5 * x^2");
     delExpTree(x);
   }
 
   /* integral of x w.r.t another variable */
   {
     ExpTree *x = newExpLeaf(EXP_VAR, "x");
-    test_integral(x, "y", "(x * y)");
+    test_integral(x, "y", "x * y");
     delExpTree(x);
   }
 
@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
     ExpTree *x = newExpLeaf(EXP_VAR, "x");
     ExpTree *exp =
         newExpOp(EXP_EXP_OP, cpyExpTree(x), newExpLeaf(EXP_NUM, "2"));
-    test_integral(exp, "x", "((1 / (2 + 1)) * (x^3))");
+    test_integral(exp, "x", "1 / (2 + 1) * x^3");
 
     delExpTree(x);
     delExpTree(exp);
@@ -92,8 +92,8 @@ int main(int argc, char *argv[]) {
 
     /* Test integral of the polynomial */
     test_integral(polynomial, "x",
-                  "(((((1 / (3 + 1)) * (x^4)) + ((42 * x) * ((1 / (2 + 1)) * "
-                  "(x^3)))) + ((10 * x) * (0.5 * (x^2)))) - (y * x))");
+                  "1 / (3 + 1) * x^4 + 42 * x * 1 / (2 + 1) * x^3 + 10 * x * "
+                  "0.5 * x^2 - y * x");
 
     /* clean */
     delExpTree(x);
@@ -105,7 +105,7 @@ int main(int argc, char *argv[]) {
   {
     ExpTree *x = newExpLeaf(EXP_VAR, "x");
     ExpTree *sin_x = newExpTree(EXP_FUN, strdup("sin(x)"), cpyExpTree(x), NULL);
-    test_integral(sin_x, "x", "(-1 * cos(x))");
+    test_integral(sin_x, "x", "-1 * cos(x)");
     delExpTree(x);
     delExpTree(sin_x);
   }
@@ -124,7 +124,7 @@ int main(int argc, char *argv[]) {
   {
     ExpTree *x = newExpLeaf(EXP_VAR, "x");
     ExpTree *cos_x = newExpTree(EXP_FUN, strdup("cos(x)"), cpyExpTree(x), NULL);
-    test_integral(cos_x, "x", "(1 * sin(x))");
+    test_integral(cos_x, "x", "1 * sin(x)");
     delExpTree(x);
     delExpTree(cos_x);
   }
@@ -143,7 +143,7 @@ int main(int argc, char *argv[]) {
   {
     ExpTree *x = newExpLeaf(EXP_VAR, "x");
     ExpTree *sqrt_x = newExpTree(EXP_FUN, strdup("sqrt"), cpyExpTree(x), NULL);
-    test_integral(sqrt_x, "x", "((2/3) * (x^(3/2)))");
+    test_integral(sqrt_x, "x", "(2/3) * x^(3/2)");
     delExpTree(x);
     delExpTree(sqrt_x);
   }

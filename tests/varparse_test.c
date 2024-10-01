@@ -27,8 +27,8 @@ int main(int argc, char *argv[]) {
   char buffer[100];
   FILE *stream = fmemopen(buffer, 100, "w");
   assert(stream != NULL);
-  const char msg[] = "last in [-3.444000, -3.333000]; y in [-1.400000, "
-                     "3.100000]; x in [1.000000, 1.000000]; ";
+  const char msg[] = "(last ,in, [-3.444000, -3.333000]), (y ,in, [-1.400000, "
+                     "3.100000]), (x ,in, [1.000000, 1.000000])";
   printDomain(list, stream);
   fclose(stream); /* close to flush and write null byte */
   printf("\n");

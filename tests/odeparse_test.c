@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     FILE *stream = fmemopen(buffer, 100, "w");
     assert(stream != NULL);
     const char msg[] =
-        "last' = (2 * at); y' = sqrt(((b^2) - ((4 * a) * c))); x' = -b; ";
+        "(last' ,=, 2 * at), (y' ,=, sqrt((b^2 - 4 * a * c))), (x' ,=, -b)";
     printOdeList(list, stream);
     fclose(stream); /* close to flush and write null byte */
     printf("expect: |%s| = %lu\n", msg, strlen(msg));

@@ -20,8 +20,8 @@ void test_derivative(ExpTree *expr, char *var, const char *expected_msg) {
   printf("Expect: %s\n", expected_msg);
   printf("Actual: %s\n", buffer);
   printf("!strcmp = %i\n", !strcmp(buffer, expected_msg));
-  assert(!strcmp(buffer, expected_msg));
   fflush(stdout); // Flush stdout
+  assert(!strcmp(buffer, expected_msg));
 
   /* clean */
   free(buffer);
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
     ExpTree *x = newExpLeaf(EXP_VAR, "x");
     ExpTree *exp =
         newExpOp(EXP_EXP_OP, cpyExpTree(x), newExpLeaf(EXP_NUM, "2"));
-    test_derivative(exp, "x", "((2 * 1) * (x^1))");
+    test_derivative(exp, "x", "2 * 1 * x^1");
 
     delExpTree(x);
     delExpTree(exp);
@@ -92,9 +92,8 @@ int main(int argc, char *argv[]) {
 
     /* Test derivative of the polynomial */
     test_derivative(polynomial, "x",
-                    "(((((3 * 1) * (x^2)) + ((0 * (x^2)) + (42 "
-                    "* ((2 * 1) * (x^1))))) + ((0 * x) + (10 * "
-                    "1))) - 0)");
+                    "3 * 1 * x^2 + 0 * x^2 + 42 * 2 * 1 * x^1 + 0 * x + 10 * "
+                    "1 - 0");
 
     /* Free memory */
     delExpTree(x);
@@ -106,7 +105,7 @@ int main(int argc, char *argv[]) {
   {
     ExpTree *x = newExpLeaf(EXP_VAR, "x");
     ExpTree *sin_x = newExpTree(EXP_FUN, strdup("sin"), cpyExpTree(x), NULL);
-    test_derivative(sin_x, "x", "(cos(x) * 1)");
+    test_derivative(sin_x, "x", "cos(x) * 1");
     delExpTree(x);
     delExpTree(sin_x);
   }
@@ -115,7 +114,7 @@ int main(int argc, char *argv[]) {
   {
     ExpTree *x = newExpLeaf(EXP_VAR, "x");
     ExpTree *cos_x = newExpTree(EXP_FUN, strdup("Cos"), cpyExpTree(x), NULL);
-    test_derivative(cos_x, "x", "(-1 * (sin(x) * 1))");
+    test_derivative(cos_x, "x", "-1 * sin(x) * 1");
     delExpTree(x);
     delExpTree(cos_x);
   }
@@ -148,9 +147,8 @@ int main(int argc, char *argv[]) {
     ExpTree *sine_polynomial =
         newExpTree(EXP_FUN, strdup("sin"), polynomial, NULL);
     test_derivative(sine_polynomial, "x",
-                    "(cos(((((x^3) + (42 * (x^2))) + (10 * x)) - y)) * (((((3 "
-                    "* 1) * (x^2)) + ((0 * (x^2)) + (42 * ((2 * 1) * (x^1))))) "
-                    "+ ((0 * x) + (10 * 1))) - 0))");
+                    "cos((x^3 + 42 * x^2 + 10 * x - y)) * (3 * 1 * x^2 + 0 * "
+                    "x^2 + 42 * 2 * 1 * x^1 + 0 * x + 10 * 1 - 0)");
 
     /* Free memory */
     delExpTree(x);
@@ -186,9 +184,8 @@ int main(int argc, char *argv[]) {
     ExpTree *cosine_polynomial =
         newExpTree(EXP_FUN, strdup("cos"), polynomial, NULL);
     test_derivative(cosine_polynomial, "x",
-                    "(-1 * (sin(((((x^3) + (42 * (x^2))) + (10 * x)) - y)) * "
-                    "(((((3 * 1) * (x^2)) + ((0 * (x^2)) + (42 * ((2 * 1) * "
-                    "(x^1))))) + ((0 * x) + (10 * 1))) - 0)))");
+                    "-1 * sin((x^3 + 42 * x^2 + 10 * x - y)) * (3 * 1 * x^2 + "
+                    "0 * x^2 + 42 * 2 * 1 * x^1 + 0 * x + 10 * 1 - 0)");
 
     /* Free memory */
     delExpTree(x);
@@ -200,7 +197,7 @@ int main(int argc, char *argv[]) {
   {
     ExpTree *x = newExpLeaf(EXP_VAR, "x");
     ExpTree *sqrt_x = newExpTree(EXP_FUN, strdup("sqrt"), cpyExpTree(x), NULL);
-    test_derivative(sqrt_x, "x", "(0.5 * (1 / sqrt(x)))");
+    test_derivative(sqrt_x, "x", "0.5 * 1 / sqrt(x)");
     delExpTree(x);
     delExpTree(sqrt_x);
   }
@@ -213,7 +210,7 @@ int main(int argc, char *argv[]) {
     ExpTree *sqrt_x_cubed =
         newExpTree(EXP_FUN, strdup("sqrt"), cpyExpTree(x_cubed), NULL);
     test_derivative(sqrt_x_cubed, "x",
-                    "(0.5 * (((3 * 1) * (x^2)) / sqrt((x^3))))");
+                    "0.5 * (3 * 1 * x^2) / sqrt((x^3))");
     delExpTree(x);
     delExpTree(x_cubed);
     delExpTree(sqrt_x_cubed);

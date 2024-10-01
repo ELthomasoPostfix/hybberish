@@ -38,14 +38,14 @@ int main(int argc, char *argv[]) {
   FILE *stream = open_memstream(&buffer, &buflen);
   assert(stream != NULL);
   /* Use the tree printing functionality to verify the result. */
-  const char msg[] = "((-b + sqrt(((b^2) - ((4 * a) * c)))) / (2 * a))";
+  const char msg[] = "(-b + sqrt((b^2 - 4 * a * c))) / (2 * a)";
   printExpTree(tree, stream);
   fclose(stream); /* close to flush and add a null byte*/
   printf("expect: |%s| = %lu\n", msg, strlen(msg));
   printf("actual: |%s| = %lu\n", buffer, strlen(buffer));
   printf("!strcmp = %i\n", !strcmp(buffer, msg));
+  fflush(stdout);
   assert(!strcmp(buffer, msg));
-  fprintf(stderr, "done!\n");
 
   /* clean */
   delExpTree(tree);
