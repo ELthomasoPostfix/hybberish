@@ -136,7 +136,7 @@ void printDomain(const Domain *list, FILE *where) {
   fprintf(where, "(%s ,in, ", list->var);
 
   printInterval(&list->domain, where);
-  fprintf(where, ") ");
+  fprintf(where, ")");
 
   if (list->next != NULL) {
     fprintf(where, ", ");
@@ -243,19 +243,17 @@ void printExpTree(const ExpTree *tree, FILE *where) {
     assert(tree->left != NULL);
     assert(tree->right != NULL);
 
-    /* If an operand of a division is also a division, so that parent and
-      subtree have the same precedence, then group that operand to ensure
+    /* If an operand of a division has the same precedence, so that parent
+      and subtree have the same precedence, then group that operand to ensure
       correctness. */
     bool parentIsDiv = tree->type == EXP_DIV_OP;
-    bool leftIsDiv   = tree->left->type == EXP_DIV_OP;
-    bool rightIsDiv  = tree->right->type == EXP_DIV_OP;
     /* If the right operand of a subtraction has the same precedence, so that
       parent and subtree have the same precedence, then group that operand
       to ensure correctness. */
     bool parentIsSub = tree->type == EXP_SUB_OP;
 
-    bool allowSamePrecL = parentIsDiv && leftIsDiv;
-    bool allowSamePrecR = (parentIsDiv && rightIsDiv) || parentIsSub;
+    bool allowSamePrecL = parentIsDiv;
+    bool allowSamePrecR = parentIsDiv || parentIsSub;
     printSubTree(tree, tree->left, where, allowSamePrecL);
     printBinOp(tree->type, where);
     printSubTree(tree, tree->right, where, allowSamePrecR);
@@ -311,7 +309,7 @@ void printTaylorModel(const TaylorModel *const list, FILE *where) {
   assert(list->exp != NULL);
 
   printExpTree(list->exp, where);
-  fprintf(where, ", ");
+  fprintf(where, "\",\", ");
   printInterval(&list->remainder, where);
   fprintf(where, ")");
 
